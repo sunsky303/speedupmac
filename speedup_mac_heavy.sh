@@ -1,3 +1,4 @@
+set  -x
 # from : 10 terminal commands to speed up your Mac | defaults-write.com
 #        https://www.defaults-write.com/10-terminal-commands-to-speed-up-macos-sierra-on-your-mac/
 echo "#1. Cleaning Apple System Logs will speed up terminal"
@@ -26,11 +27,11 @@ defaults write com.apple.Safari WebKitInitialTimedLayoutDelay 0.25
 echo "#11. The keyboard react faster to keystrokes (not equally useful for everyone"
 defaults write NSGlobalDomain KeyRepeat -int 0
 
-echo "#Backing-up important Caches"
-cp -R ~/Library/Caches/pip ~/Library/CachesImportant/.
+#echo "#Backing-up important Caches"
+#cp -R ~/Library/Caches/pip ~/Library/CachesImportant/.
 
 echo "#12. Cleaning ~/Library/Caches/*"
-rm -rf ~/Library/Caches/*
+rm -rf ~/Library/Caches/* | true
 echo "#13. Cleaning /Library/Caches/*"
 sudo rm -rf /Library/Caches/*
 echo "#14. Rebuilding Spotlight index"
