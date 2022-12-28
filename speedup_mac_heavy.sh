@@ -113,17 +113,60 @@ defaults write com.apple.gamed Disabled -bool true
 #echo "#37. brew cleanup"
 #brew cleanup
 
-echo "#Restoring only important Caches"
-cp -R ~/Library/CachesImportant/pip ~/Library/Caches/.
-#echo "#38. Restarting Mac"
-#mac restart
+#Skip the GUI login screen (at your own risk!)
+defaults write com.apple.loginwindow autoLoginUser -bool true
 
-echo "#39. Cleanup firefox driver logs\n"
-sudo rm -rf /Users/ishandutta2007/geckodriver.log
+# massively increase virtualized macOS by disabling spotlight.
+sudo mdutil -i off -a
 
-echo "#40. disable the calendar agent\n"
-launchctl unload -w /System/Library/LaunchAgents/com.apple.CalendarAgent.plist
+# since you can't use spotlight to find apps, you can renable with
+# sudo mdutil -i on -a
 
-echo "Reverting ownership to ishandutta2007\n"
-chown -R ishandutta2007 /Users/ishandutta2007/Library/Caches
-chown -R ishandutta2007 /Users/ishandutta2007/Library/CachesImportant
+# check if enabled (should contain `serverperfmode=1`)
+nvram boot-args
+
+# turn on
+sudo nvram boot-args="serverperfmode=1 $(nvram boot-args 2>/dev/null | cut -f 2-)"
+
+# turn off
+#sudo nvram boot-args="$(nvram boot-args 2>/dev/null | sed -e $'s/boot-args\t//;s/serverperfmode=1//')"
+
+#Disable heavy login screen wallpaper
+sudo defaults write /Library/Preferences/com.apple.loginwindow DesktopPicture ""
+
+#Reduce Motion & Transparency
+defaults write com.apple.Accessibility DifferentiateWithoutColor -int 1
+defaults write com.apple.Accessibility ReduceMotionEnabled -int 1
+defaults write com.apple.universalaccess reduceMotion -int 1
+defaults write com.apple.universalaccess reduceTransparency -int 1
+defaults write com.apple.Accessibility ReduceMotionEnabled -int 1
+
+
+#Enable multi-sessions
+sudo /usr/bin/defaults write .GlobalPreferences MultipleSessionsEnabled -bool TRUE
+defaults write "Apple Global Domain" MultipleSessionsEnabled -bool true
+
+#Disable updates (at your own risk!)
+defaults write /Library/Preferences/com.apple.SoftwareUpdate AutomaticDownload -bool false
+defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool false
+defaults write com.apple.commerce AutoUpdate -bool false
+defaults write com.apple.commerce AutoUpdateRestartRequired -bool false
+defaults write com.apple.SoftwareUpdate ConfigDataInstall -int 0
+defaults write com.apple.SoftwareUpdate CriticalUpdateInstall -int 0
+defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 0
+defaults write com.apple.SoftwareUpdate AutomaticDownload -int 0
+
+#Disable screen locking
+defaults write com.apple.loginwindow DisableScreenLock -bool true
+
+#Show a lighter username/password prompt instead of a list of all the users
+defaults write /Library/Preferences/com.apple.loginwindow.plist SHOWFULLNAME -bool true
+defaults write com.apple.loginwindow AllowList -string '*'
+
+#Disable saving the application state on shutdown
+defaults write com.apple.loginwindow TALLogoutSavesState -bool false
+
+
+#Disable apps from going to sleep at all
+#sudo -u "${REAL_NAME}" sudo defaults write NSGlobalDomain NSAppSleepDisabled -bool YES
+
